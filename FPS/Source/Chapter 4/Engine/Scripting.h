@@ -11,7 +11,8 @@
 //-----------------------------------------------------------------------------
 // Variable Type Enumeration
 //-----------------------------------------------------------------------------
-enum{ VARIABLE_BOOL, VARIABLE_COLOUR, VARIABLE_FLOAT, VARIABLE_NUMBER, VARIABLE_STRING, VARIABLE_VECTOR, VARIABLE_UNKNOWN };
+enum{ VARIABLE_BOOL, VARIABLE_COLOUR, VARIABLE_FLOAT, VARIABLE_NUMBER, 
+	VARIABLE_STRING, VARIABLE_VECTOR, VARIABLE_UNKNOWN };
 
 //-----------------------------------------------------------------------------
 // Variable Class

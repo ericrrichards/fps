@@ -53,9 +53,7 @@ namespace Engine {
                 try {
                     _keyboard.Poll();
                     _keyState = _keyboard.GetCurrentState();
-                    foreach (var pressedKey in _keyState.PressedKeys) {
-                        //Log.Info(pressedKey.ToString());
-                    }
+                    
 
                     if (Result.Last.IsSuccess) {
                         break;
