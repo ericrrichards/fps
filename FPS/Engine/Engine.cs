@@ -63,6 +63,9 @@ namespace Engine {
             Window.Activate();
             _states = new List<State>();
             CurrentState = null;
+
+            ScriptManager = new ResourceManager<Script>();
+
             Input = new Input(Window);
 
             if (_setup.StateSetup != null) {
@@ -148,6 +151,8 @@ namespace Engine {
 
         public State CurrentState { get; private set; }
         public Input Input { get; private set; }
+        public ResourceManager<Script> ScriptManager { get; private set; }
+
 
         public void Quit() {
             _running = false;
