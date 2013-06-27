@@ -13,18 +13,21 @@ namespace Engine {
 
     public class Variable {
         private VariableType _type;
-        private string _name;
+        private readonly string _name;
         private object _data;
 
-        public Variable(string name, Stream file) {
-            _name = name;
+        private void ParseStream(string name, Stream file) {
+            
             if (file == null) {
                 return;
             }
+
             var reader = new StreamReader(file);
             var readLine = reader.ReadLine();
+
             if (readLine != null) {
                 var buffer = Tokenize(readLine);
+                
                 switch (buffer.First()) {
                     case "bool":
                         _type = VariableType.Bool;
@@ -52,7 +55,7 @@ namespace Engine {
                         _data = long.TryParse(buffer[1], out l) ? l : 0;
                         break;
                     case "string":
-                        _type  = VariableType.String;
+                        _type = VariableType.String;
                         _data = buffer[1];
                         break;
                     case "vector":
@@ -106,6 +109,18 @@ namespace Engine {
             _type = type;
             _data = value;
         }
+
+        public Variable(string buffer) {
+            var i = buffer.IndexOf(' ');
+            var name = buffer.Substring(0, i);
+            var data = buffer.Substring(i);
+            ParseStream(name, new MemoryStream(Encoding.ASCII.GetBytes(data)));
+        }
+
+        public Variable(string name, Stream file) {
+            ParseStream(name, file);
+        }
+
         ~Variable() {
             
         }

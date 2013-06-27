@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 namespace Engine {
-    class Resource<T> {
+    public class Resource<T> {
         public Resource(string name, string path = "./") {
             if (!string.IsNullOrEmpty(name)) {
                 Name = name;
