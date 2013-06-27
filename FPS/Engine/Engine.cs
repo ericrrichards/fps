@@ -10,7 +10,7 @@ using SlimDX.DirectInput;
 namespace Engine {
 
     public class Base {
-        public void ReleaseCom( ComObject p) {
+        protected void ReleaseCom( ComObject p) {
             if (p != null && !p.Disposed) p.Dispose();
             p = null;
             

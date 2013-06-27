@@ -133,7 +133,7 @@ INT_PTR DeviceEnumeration::SettingsDialogProc( HWND dialog, UINT msg, WPARAM wpa
 							sprintf( text, "%d x %d", m_displayModes->GetCurrent()->mode.Width, m_displayModes->GetCurrent()->mode.Height );
 							if (!ComboBoxContainsText( dialog, IDC_RESOLUTION, text ) )
 								ComboBoxAdd( dialog, IDC_RESOLUTION, (void*)MAKELONG( m_displayModes->GetCurrent()->mode.Width, m_displayModes->GetCurrent()->mode.Height ), text );
-						}
+						}(
 					}
 					ComboBoxSelect( dialog, IDC_RESOLUTION, *m_settingsScript->GetNumberData( "resolution" ) );
 
