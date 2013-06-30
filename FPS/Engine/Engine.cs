@@ -12,6 +12,8 @@ using Device = SlimDX.Direct3D9.Device;
 using DeviceType = SlimDX.Direct3D9.DeviceType;
 
 namespace Engine {
+    using System.Threading;
+
     public class Base {
         protected void ReleaseCom(ComObject p) {
             if (p != null && !p.Disposed) p.Dispose();
@@ -56,7 +58,7 @@ namespace Engine {
 
         public Engine(EngineSetup setup = null) {
             XmlConfigurator.Configure();
-
+            
             _loaded = false;
             _setup = new EngineSetup();
             if (setup != null) {
@@ -88,7 +90,7 @@ namespace Engine {
                 DeviceWindowHandle = Window.Handle,
                 Windowed =  enumeration.Windowed,
                 EnableAutoDepthStencil =  true,
-                AutoDepthStencilFormat = Format.D16,
+                AutoDepthStencilFormat = Format.D24S8,
                 FullScreenRefreshRateInHertz = enumeration.SelectedDisplayMode.RefreshRate,
                 PresentationInterval = enumeration.VSync ? PresentInterval.Default :  PresentInterval.Immediate,
                 Multisample = MultisampleType.None,
@@ -138,6 +140,14 @@ namespace Engine {
 
             _loaded = true;
             _running = true;
+        }
+
+        private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs) {
+            throw new NotImplementedException();
+        }
+
+        private void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs) {
+            throw new NotImplementedException();
         }
 
         public static Engine GEngine {
@@ -201,7 +211,11 @@ namespace Engine {
                         if (_stateChanged) {
                             continue;
                         }
-                        _device.Clear(viewer.ClearFlags, 0, 1.0f, 0);
+                        try {
+                            _device.Clear(viewer.ClearFlags, Color.White, 1.0f, 0);
+                        } catch (Direct3D9Exception dex) {
+                            
+                        }
                         if (_device.BeginScene().IsSuccess) {
                             if (CurrentState != null) {
                                 CurrentState.Render();

@@ -9,7 +9,7 @@ namespace Engine {
         public ClearFlags ClearFlags { get; set; }
 
         public ViewerSetup() {
-            ClearFlags = ClearFlags.None;
+            ClearFlags = ClearFlags.All;
         }
     }
 

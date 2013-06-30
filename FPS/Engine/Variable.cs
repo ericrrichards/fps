@@ -94,7 +94,9 @@ namespace Engine {
                     continue;
                 }
                 if (c == ' ' && !inQuotes) {
-                    ret.Add(accum);
+                    if (!string.IsNullOrWhiteSpace(accum)) {
+                        ret.Add(accum);
+                    }
                     accum = "";
                     continue;
                 }
@@ -114,10 +116,12 @@ namespace Engine {
             var i = buffer.IndexOf(' ');
             var name = buffer.Substring(0, i);
             var data = buffer.Substring(i);
+            _name = name;
             ParseStream(name, new MemoryStream(Encoding.ASCII.GetBytes(data)));
         }
 
         public Variable(string name, Stream file) {
+            _name = name;
             ParseStream(name, file);
         }
 

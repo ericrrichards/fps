@@ -31,6 +31,11 @@ namespace Engine {
         ~Script() {
             _variables.Clear();
         }
+
+        public int VariableCount {
+            get { return _variables.Count; }
+        }
+
         public void AddVariable(string name, VariableType type, object value) {
             if (!string.IsNullOrEmpty(name) && _variables.ContainsKey(name)) {
                 SetVariable(name, value);

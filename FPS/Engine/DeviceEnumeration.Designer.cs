@@ -24,20 +24,20 @@
         /// </summary>
         private void InitializeComponent() {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtAdapterName = new System.Windows.Forms.TextBox();
             this.txtDriverVersion = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.txtAdapterName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.rbWindowed = new System.Windows.Forms.RadioButton();
-            this.rbFullscreen = new System.Windows.Forms.RadioButton();
-            this.chkVSync = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.cbColorFormat = new System.Windows.Forms.ComboBox();
-            this.cbResolution = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.cbRefresh = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.cbResolution = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cbColorFormat = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.chkVSync = new System.Windows.Forms.CheckBox();
+            this.rbFullscreen = new System.Windows.Forms.RadioButton();
+            this.rbWindowed = new System.Windows.Forms.RadioButton();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -57,22 +57,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Adapter Details";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Display Adapter:";
-            // 
-            // txtAdapterName
-            // 
-            this.txtAdapterName.Location = new System.Drawing.Point(96, 19);
-            this.txtAdapterName.Name = "txtAdapterName";
-            this.txtAdapterName.Size = new System.Drawing.Size(254, 20);
-            this.txtAdapterName.TabIndex = 1;
-            // 
             // txtDriverVersion
             // 
             this.txtDriverVersion.Location = new System.Drawing.Point(96, 45);
@@ -88,6 +72,22 @@
             this.label2.Size = new System.Drawing.Size(76, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Driver Version:";
+            // 
+            // txtAdapterName
+            // 
+            this.txtAdapterName.Location = new System.Drawing.Point(96, 19);
+            this.txtAdapterName.Name = "txtAdapterName";
+            this.txtAdapterName.Size = new System.Drawing.Size(254, 20);
+            this.txtAdapterName.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Display Adapter:";
             // 
             // groupBox2
             // 
@@ -107,61 +107,25 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Display Settings";
             // 
-            // rbWindowed
+            // cbRefresh
             // 
-            this.rbWindowed.AutoSize = true;
-            this.rbWindowed.Location = new System.Drawing.Point(9, 19);
-            this.rbWindowed.Name = "rbWindowed";
-            this.rbWindowed.Size = new System.Drawing.Size(76, 17);
-            this.rbWindowed.TabIndex = 0;
-            this.rbWindowed.TabStop = true;
-            this.rbWindowed.Text = "Windowed";
-            this.rbWindowed.UseVisualStyleBackColor = true;
-            this.rbWindowed.CheckedChanged += new System.EventHandler(this.rbWindowed_CheckedChanged);
+            this.cbRefresh.DisplayMember = "Value";
+            this.cbRefresh.Enabled = false;
+            this.cbRefresh.FormattingEnabled = true;
+            this.cbRefresh.Location = new System.Drawing.Point(96, 119);
+            this.cbRefresh.Name = "cbRefresh";
+            this.cbRefresh.Size = new System.Drawing.Size(254, 21);
+            this.cbRefresh.TabIndex = 8;
+            this.cbRefresh.ValueMember = "Value";
             // 
-            // rbFullscreen
+            // label5
             // 
-            this.rbFullscreen.AutoSize = true;
-            this.rbFullscreen.Location = new System.Drawing.Point(9, 42);
-            this.rbFullscreen.Name = "rbFullscreen";
-            this.rbFullscreen.Size = new System.Drawing.Size(73, 17);
-            this.rbFullscreen.TabIndex = 1;
-            this.rbFullscreen.TabStop = true;
-            this.rbFullscreen.Text = "Fullscreen";
-            this.rbFullscreen.UseVisualStyleBackColor = true;
-            this.rbFullscreen.CheckedChanged += new System.EventHandler(this.rbWindowed_CheckedChanged);
-            // 
-            // chkVSync
-            // 
-            this.chkVSync.AutoSize = true;
-            this.chkVSync.Enabled = false;
-            this.chkVSync.Location = new System.Drawing.Point(96, 42);
-            this.chkVSync.Name = "chkVSync";
-            this.chkVSync.Size = new System.Drawing.Size(60, 17);
-            this.chkVSync.TabIndex = 2;
-            this.chkVSync.Text = "V-Sync";
-            this.chkVSync.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Color Depth:";
-            // 
-            // cbColorFormat
-            // 
-            this.cbColorFormat.DisplayMember = "value";
-            this.cbColorFormat.Enabled = false;
-            this.cbColorFormat.FormattingEnabled = true;
-            this.cbColorFormat.Location = new System.Drawing.Point(96, 65);
-            this.cbColorFormat.Name = "cbColorFormat";
-            this.cbColorFormat.Size = new System.Drawing.Size(254, 21);
-            this.cbColorFormat.TabIndex = 4;
-            this.cbColorFormat.ValueMember = "Value";
-            this.cbColorFormat.SelectedIndexChanged += new System.EventHandler(this.cbColorFormat_SelectedIndexChanged);
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 122);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(73, 13);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "Refresh Rate:";
             // 
             // cbResolution
             // 
@@ -184,25 +148,60 @@
             this.label4.TabIndex = 5;
             this.label4.Text = "Resolution:";
             // 
-            // cbRefresh
+            // cbColorFormat
             // 
-            this.cbRefresh.DisplayMember = "Value";
-            this.cbRefresh.Enabled = false;
-            this.cbRefresh.FormattingEnabled = true;
-            this.cbRefresh.Location = new System.Drawing.Point(96, 119);
-            this.cbRefresh.Name = "cbRefresh";
-            this.cbRefresh.Size = new System.Drawing.Size(254, 21);
-            this.cbRefresh.TabIndex = 8;
-            this.cbRefresh.ValueMember = "Value";
+            this.cbColorFormat.DisplayMember = "value";
+            this.cbColorFormat.Enabled = false;
+            this.cbColorFormat.FormattingEnabled = true;
+            this.cbColorFormat.Location = new System.Drawing.Point(96, 65);
+            this.cbColorFormat.Name = "cbColorFormat";
+            this.cbColorFormat.Size = new System.Drawing.Size(254, 21);
+            this.cbColorFormat.TabIndex = 4;
+            this.cbColorFormat.ValueMember = "Value";
+            this.cbColorFormat.SelectedIndexChanged += new System.EventHandler(this.cbColorFormat_SelectedIndexChanged);
             // 
-            // label5
+            // label3
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 122);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(73, 13);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Refresh Rate:";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 68);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(66, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Color Depth:";
+            // 
+            // chkVSync
+            // 
+            this.chkVSync.AutoSize = true;
+            this.chkVSync.Enabled = false;
+            this.chkVSync.Location = new System.Drawing.Point(96, 42);
+            this.chkVSync.Name = "chkVSync";
+            this.chkVSync.Size = new System.Drawing.Size(60, 17);
+            this.chkVSync.TabIndex = 2;
+            this.chkVSync.Text = "V-Sync";
+            this.chkVSync.UseVisualStyleBackColor = true;
+            // 
+            // rbFullscreen
+            // 
+            this.rbFullscreen.AutoSize = true;
+            this.rbFullscreen.Location = new System.Drawing.Point(9, 42);
+            this.rbFullscreen.Name = "rbFullscreen";
+            this.rbFullscreen.Size = new System.Drawing.Size(73, 17);
+            this.rbFullscreen.TabIndex = 1;
+            this.rbFullscreen.TabStop = true;
+            this.rbFullscreen.Text = "Fullscreen";
+            this.rbFullscreen.UseVisualStyleBackColor = true;
+            // 
+            // rbWindowed
+            // 
+            this.rbWindowed.AutoSize = true;
+            this.rbWindowed.Location = new System.Drawing.Point(9, 19);
+            this.rbWindowed.Name = "rbWindowed";
+            this.rbWindowed.Size = new System.Drawing.Size(76, 17);
+            this.rbWindowed.TabIndex = 0;
+            this.rbWindowed.TabStop = true;
+            this.rbWindowed.Text = "Windowed";
+            this.rbWindowed.UseVisualStyleBackColor = true;
+            this.rbWindowed.CheckedChanged += new System.EventHandler(this.rbWindowed_CheckedChanged);
             // 
             // btnOK
             // 

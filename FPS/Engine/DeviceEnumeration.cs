@@ -17,6 +17,7 @@ namespace Engine {
         private SlimDX.Direct3D9.DisplayMode _selectedDisplayMode;
         private bool _windowed;
         private bool _vsync;
+
         public DeviceEnumeration(Direct3D d3d) {
             InitializeComponent();
             _displayModes = new List<DisplayMode>();
@@ -49,12 +50,19 @@ namespace Engine {
             txtAdapterName.Text = _adapter.Description;
             txtDriverVersion.Text = _adapter.DriverVersion.ToString();
 
-            if (_settingsScript.GetBool("windowed")) {
+            if (_settingsScript.VariableCount == 0) {
                 _windowed = true;
                 rbWindowed.Checked = true;
             } else {
-                rbFullscreen.Checked = true;
-                _windowed = false;
+
+
+                if (_settingsScript.GetBool("windowed")) {
+                    _windowed = true;
+                    rbWindowed.Checked = true;
+                } else {
+                    rbFullscreen.Checked = true;
+                    _windowed = false;
+                }
             }
             if (!_windowed) {
                 // enable fullscreen options
@@ -80,7 +88,7 @@ namespace Engine {
             foreach (var mode in _displayModes) {
                 if (MakeLong(mode.Mode.Width, mode.Mode.Height) == ((KeyValuePair<long, string>) cbResolution.SelectedItem).Key) {
                     var text = string.Format("{0} Hz", mode.Mode.RefreshRate);
-                    var i = cbRefresh.Items.Add(new KeyValuePair<int, string>(mode.Mode.RefreshRate, text));
+                    var i = cbRefresh.Items.Add(new KeyValuePair<long, string>(mode.Mode.RefreshRate, text));
 
                     if (mode.Mode.RefreshRate == refresh) {
                         cbRefresh.SelectedIndex = i;
@@ -119,10 +127,10 @@ namespace Engine {
 
         private void btnOK_Click(object sender, EventArgs e) {
             _selectedDisplayMode = new SlimDX.Direct3D9.DisplayMode();
-            _selectedDisplayMode.Width = LowWord(((KeyValuePair<long, string>) cbResolution.SelectedItem).Key);
-            _selectedDisplayMode.Height = HighWord(((KeyValuePair<long, string>) cbResolution.SelectedItem).Key);
-            _selectedDisplayMode.RefreshRate = ((KeyValuePair<int, string>) cbRefresh.SelectedItem).Key;
-            _selectedDisplayMode.Format = ((KeyValuePair<Format, string>) cbColorFormat.SelectedItem).Key;
+            _selectedDisplayMode.Width = LowWord(cbResolution.SelectedItem!= null ? ((KeyValuePair<long, string>) cbResolution.SelectedItem).Key : 0);
+            _selectedDisplayMode.Height = HighWord(cbResolution.SelectedItem!= null ?((KeyValuePair<long, string>) cbResolution.SelectedItem).Key : 0);
+            _selectedDisplayMode.RefreshRate = (int)(cbRefresh.SelectedItem != null ? ((KeyValuePair<long, string>) cbRefresh.SelectedItem).Key : 0);
+            _selectedDisplayMode.Format = cbColorFormat.SelectedItem!=null ? ((KeyValuePair<Format, string>) cbColorFormat.SelectedItem).Key : Format.Unknown;
             _windowed = rbWindowed.Checked;
             _vsync = chkVSync.Checked;
 
@@ -130,7 +138,7 @@ namespace Engine {
             _settingsScript.AddVariable("vsync", VariableType.Bool, _vsync);
             _settingsScript.AddVariable("bpp", VariableType.Number, (long)_selectedDisplayMode.Format);
             _settingsScript.AddVariable("resolution", VariableType.Number, MakeLong(_selectedDisplayMode.Width, _selectedDisplayMode.Width));
-            _settingsScript.AddVariable("refresh", VariableType.Number, _selectedDisplayMode.RefreshRate);
+            _settingsScript.AddVariable("refresh", VariableType.Number, (long)_selectedDisplayMode.RefreshRate);
 
             _settingsScript.SaveScript();
             
@@ -144,7 +152,7 @@ namespace Engine {
         }
 
         private void cbColorFormat_SelectedIndexChanged(object sender, EventArgs e) {
-            var selectedRes = ((KeyValuePair<long, string>) cbResolution.SelectedItem).Key;
+            var selectedRes = cbResolution.SelectedItem != null ? ((KeyValuePair<long, string>)(cbResolution.SelectedItem)).Key : -1;
             ResetResolution(selectedRes);
             if (cbResolution.SelectedIndex < 0) {
                 cbResolution.SelectedIndex = 0;
@@ -152,7 +160,7 @@ namespace Engine {
         }
 
         private void cbResolution_SelectedIndexChanged(object sender, EventArgs e) {
-            var selectedRefresh = ((KeyValuePair<long, string>)cbRefresh.SelectedItem).Key;
+            var selectedRefresh = cbRefresh.SelectedItem != null ? ((KeyValuePair<long, string>)(cbRefresh.SelectedItem)).Key : -1;
             ResetRefresh(selectedRefresh);
             if (cbRefresh.SelectedIndex < 0) {
                 cbRefresh.SelectedIndex = 0;
