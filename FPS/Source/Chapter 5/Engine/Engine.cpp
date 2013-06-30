@@ -80,7 +80,9 @@ Engine::Engine( EngineSetup *setup )
 	}
 
 	// Create the window and retrieve a handle to it.
-	m_window = CreateWindow( "WindowClass", m_setup->name, g_deviceEnumeration->IsWindowed() ? WS_OVERLAPPED : WS_POPUP, 0, 0, 800, 600, NULL, NULL, m_setup->instance, NULL );
+	m_window = CreateWindow( "WindowClass", m_setup->name, 
+		g_deviceEnumeration->IsWindowed() ? WS_OVERLAPPED : WS_POPUP, 
+		0, 0, 800, 600, NULL, NULL, m_setup->instance, NULL );
 
 	// Prepare the device presentation parameters.
 	D3DPRESENT_PARAMETERS d3dpp;

@@ -5,50 +5,57 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SlimDX;
+using SlimDX.Direct3D9;
 using SlimDX.DirectInput;
+using log4net.Config;
+using Device = SlimDX.Direct3D9.Device;
+using DeviceType = SlimDX.Direct3D9.DeviceType;
 
 namespace Engine {
-
     public class Base {
-        protected void ReleaseCom( ComObject p) {
+        protected void ReleaseCom(ComObject p) {
             if (p != null && !p.Disposed) p.Dispose();
             p = null;
-            
         }
     }
 
     public delegate void StateSetup();
-    public class EngineSetup {
-        public IntPtr HInstance { get; set; }
-        public string Name { get; set; }
-        public StateSetup StateSetup { get; set; }
 
+    public class EngineSetup {
         public EngineSetup() {
             HInstance = IntPtr.Zero;
             Name = "Application";
             StateSetup = null;
+            Scale = 1.0f;
+            TotalBackBuffers = 1;
         }
+
+        public IntPtr HInstance { get; set; }
+        public string Name { get; set; }
+        public float Scale { get; set; }
+        public byte TotalBackBuffers { get; set; }
+        public StateSetup StateSetup { get; set; }
     }
 
 
     public class Engine : Base {
-        private static volatile Engine _gEngine; 
-        public static Engine GEngine { get { return _gEngine; }}
+        private static volatile Engine _gEngine;
 
 
-        private bool _loaded;
-        private bool _deactive;
-        private EngineSetup _setup;
-
+        private readonly bool _loaded;
+        private readonly EngineSetup _setup;
         private readonly List<State> _states;
+        private byte _currentBackBuffer;
+        private bool _deactive;
+        private Device _device;
+        private SlimDX.Direct3D9.DisplayMode _displayMode;
+        private long _lastTime;
+        private bool _running;
+        private Sprite _sprite;
         private bool _stateChanged;
 
-        // my adds
-        private bool _running;
-        private long _lastTime;
-
         public Engine(EngineSetup setup = null) {
-            log4net.Config.XmlConfigurator.Configure();
+            XmlConfigurator.Configure();
 
             _loaded = false;
             _setup = new EngineSetup();
@@ -57,7 +64,64 @@ namespace Engine {
             }
             _gEngine = this;
 
-            Window  = new FpsForm {Name = "WindowClass", Text = _setup.Name, FormBorderStyle = FormBorderStyle.FixedSingle, Size = new Size(800, 600)};
+            var d3d = new Direct3D();
+            var enumeration = new DeviceEnumeration(d3d);
+            if (enumeration.ShowDialog() != DialogResult.OK) {
+                ReleaseCom(d3d);
+                return;
+            }
+
+
+            Window = new FpsForm {
+                Name = "WindowClass", 
+                Text = _setup.Name, 
+                FormBorderStyle = enumeration.Windowed ? FormBorderStyle.FixedSingle : FormBorderStyle.None,
+                Size = new Size(800, 600)
+            };
+
+            var pp = new PresentParameters {
+                BackBufferWidth = enumeration.SelectedDisplayMode.Width, 
+                BackBufferHeight = enumeration.SelectedDisplayMode.Height, 
+                BackBufferFormat = enumeration.SelectedDisplayMode.Format, 
+                BackBufferCount = _setup.TotalBackBuffers,
+                SwapEffect = SwapEffect.Discard,
+                DeviceWindowHandle = Window.Handle,
+                Windowed =  enumeration.Windowed,
+                EnableAutoDepthStencil =  true,
+                AutoDepthStencilFormat = Format.D16,
+                FullScreenRefreshRateInHertz = enumeration.SelectedDisplayMode.RefreshRate,
+                PresentationInterval = enumeration.VSync ? PresentInterval.Default :  PresentInterval.Immediate,
+                Multisample = MultisampleType.None,
+                MultisampleQuality = 0,
+                PresentFlags = PresentFlags.None
+                
+            };
+            enumeration.Dispose();
+
+            _device = new Device(d3d, 0, DeviceType.Hardware, Window.Handle, CreateFlags.MixedVertexProcessing, pp);
+
+            ReleaseCom(d3d);
+
+            _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.Anisotropic);
+            _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.Anisotropic);
+            _device.SetSamplerState(0, SamplerState.MipFilter, TextureFilter.Linear);
+
+            var proj = Matrix.PerspectiveFovLH(
+                (float) (Math.PI/4),
+                (float)pp.BackBufferWidth/pp.BackBufferHeight,
+                0.1f/_setup.Scale, 1000.0f/_setup.Scale
+            );
+            _device.SetTransform(TransformState.Projection, proj);
+            _displayMode = new SlimDX.Direct3D9.DisplayMode {
+                Width = pp.BackBufferWidth, 
+                Height = pp.BackBufferHeight, 
+                RefreshRate = pp.FullScreenRefreshRateInHertz, 
+                Format = pp.BackBufferFormat
+            };
+            _currentBackBuffer = 0;
+
+            _sprite = new Sprite(_device);
+
 
             Window.Show();
             Window.Activate();
@@ -75,13 +139,33 @@ namespace Engine {
             _loaded = true;
             _running = true;
         }
+
+        public static Engine GEngine {
+            get { return _gEngine; }
+        }
+
+        public Form Window { get; private set; }
+
+        public bool DeactiveFlag {
+            set { _deactive = value; }
+        }
+
+        public State CurrentState { get; private set; }
+        public Input Input { get; private set; }
+        public ResourceManager<Script> ScriptManager { get; private set; }
+
+        // my adds
+
         public void Release() {
             if (_loaded) {
                 if (CurrentState != null) {
-                    CurrentState.Close(); 
+                    CurrentState.Close();
                 }
                 _states.Clear();
                 Input.Release();
+                ReleaseCom(_sprite);
+                ReleaseCom( _device);
+
             }
             Window.Dispose();
         }
@@ -90,15 +174,15 @@ namespace Engine {
             if (_loaded) {
                 Window.Show();
 
-                ViewerSetup viewer;
+                ViewerSetup viewer = new ViewerSetup();
 
                 _lastTime = Stopwatch.GetTimestamp();
                 while (_running) {
                     Application.DoEvents();
                     if (!_deactive) {
-                        var currentTime = Stopwatch.GetTimestamp();
-                        
-                        var elapsed = (currentTime - _lastTime)/Stopwatch.Frequency;
+                        long currentTime = Stopwatch.GetTimestamp();
+
+                        long elapsed = (currentTime - _lastTime)/Stopwatch.Frequency;
                         _lastTime = currentTime;
 
                         Input.Update();
@@ -108,7 +192,7 @@ namespace Engine {
                         }
 
                         if (CurrentState != null) {
-                            CurrentState.RequestViewer( out viewer);
+                            CurrentState.RequestViewer(out viewer);
                         }
                         _stateChanged = false;
                         if (CurrentState != null) {
@@ -117,15 +201,24 @@ namespace Engine {
                         if (_stateChanged) {
                             continue;
                         }
-                     }
+                        _device.Clear(viewer.ClearFlags, 0, 1.0f, 0);
+                        if (_device.BeginScene().IsSuccess) {
+                            if (CurrentState != null) {
+                                CurrentState.Render();
+                            }
+                            _device.EndScene();
+                            _device.Present();
+                            if (++_currentBackBuffer == _setup.TotalBackBuffers + 1) {
+                                _currentBackBuffer = 0;
+                            }
+                        }
+                    }
                 }
                 Release();
                 Application.Exit();
             }
         }
 
-        public Form Window { get; private set; }
-        public bool DeactiveFlag { set { _deactive = value; } }
 
         public void AddState(State state, bool change) {
             _states.Add(state);
@@ -136,22 +229,20 @@ namespace Engine {
             CurrentState = _states.Last();
             CurrentState.Load();
         }
+
         public void RemoveState(State state) {
             _states.Remove(state);
         }
+
         public void ChangeState(ulong id) {
-            var newState = _states.FirstOrDefault(s => s.ID == id);
+            State newState = _states.FirstOrDefault(s => s.ID == id);
             if (newState == null) return;
-            if ( CurrentState != null) CurrentState.Close();
+            if (CurrentState != null) CurrentState.Close();
             CurrentState = newState;
             CurrentState.Load();
 
             _stateChanged = true;
         }
-
-        public State CurrentState { get; private set; }
-        public Input Input { get; private set; }
-        public ResourceManager<Script> ScriptManager { get; private set; }
 
 
         public void Quit() {

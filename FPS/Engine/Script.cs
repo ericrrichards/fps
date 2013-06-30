@@ -32,7 +32,7 @@ namespace Engine {
             _variables.Clear();
         }
         public void AddVariable(string name, VariableType type, object value) {
-            if (!string.IsNullOrEmpty(name) && _variables.ContainsKey(name))) {
+            if (!string.IsNullOrEmpty(name) && _variables.ContainsKey(name)) {
                 SetVariable(name, value);
             }
             if (name != null) {
